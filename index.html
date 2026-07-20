@@ -58,6 +58,18 @@
   .reveal.in{opacity:1; transform:none;}
   @media (prefers-reduced-motion:reduce){.reveal{opacity:1; transform:none; transition:none;}}
 
+  /* ---------- UTILITY BAR (기능 미구현 - 비활성화) ----------
+  .util-bar{background:var(--navy-950); border-bottom:1px solid var(--line); font-size:12.5px;}
+  .util-bar-inner{display:flex; align-items:center; justify-content:space-between; padding:8px 28px; gap:16px;}
+  .util-notice{display:flex; align-items:center; gap:10px; color:var(--mist); overflow:hidden; min-width:0;}
+  .util-notice-tag{flex-shrink:0; background:rgba(201,164,104,0.15); color:var(--gold-400); font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px;}
+  .util-notice-text{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .util-auth{display:flex; align-items:center; gap:8px; color:var(--mist); flex-shrink:0;}
+  .util-auth a:hover{color:var(--gold-400);}
+  .util-sep{color:var(--mist-dim); opacity:.5;}
+  @media (max-width:640px){ .util-bar-inner{padding:8px 18px;} .util-notice-tag{display:none;} }
+  */
+
   /* ---------- HEADER ---------- */
   header{
     position:sticky; top:0; left:0; right:0; z-index:50;
@@ -328,6 +340,24 @@
 </style>
 </head>
 <body>
+
+<!-- UTILITY BAR (공지사항 / 로그인 / 회원가입 - 기능 미구현으로 비활성화)
+<div class="util-bar">
+  <div class="wrap util-bar-inner">
+    <div class="util-notice">
+      <span class="util-notice-tag">공지</span>
+      <span class="util-notice-text" id="utilNoticeText">공지사항을 불러오는 중...</span>
+    </div>
+    <div class="util-auth">
+      <a href="notice-board.html">공지사항</a>
+      <span class="util-sep">|</span>
+      <a href="auth.html">로그인</a>
+      <span class="util-sep">|</span>
+      <a href="auth.html?tab=signup">회원가입</a>
+    </div>
+  </div>
+</div>
+-->
 
 <header>
   <div class="nav">
@@ -736,6 +766,11 @@
         <a href="#zones">Zone계획</a>
         <a href="#gallery">조감도</a>
         <a href="#process">추진현황</a>
+        <!-- 기능 미구현으로 비활성화
+        <a href="notice-board.html">공지사항</a>
+        <a href="inquiry-board.html">문의하기</a>
+        <a href="auth.html">로그인/회원가입</a>
+        -->
       </div>
     </div>
     <div class="disclaimer">
@@ -745,6 +780,43 @@
 </footer>
 
 <script>
+  /* 공지사항 위젯 (util-bar 비활성화에 따라 함께 비활성화)
+  async function storageGet(key, shared){ try{ const r = await window.storage.get(key, shared); return r ? r.value : null; }catch(e){ return undefined; } }
+  async function storageList(prefix, shared){ try{ const r = await window.storage.list(prefix, shared); return r ? r.keys : null; }catch(e){ return undefined; } }
+  function storageAvailable(v){ return v !== undefined; }
+
+  const FALLBACK_NOTICES = [
+    {id:'seed1', title:'한남1구역 신속통합기획 홈페이지를 오픈했습니다', date: Date.now()-1000*60*60*24*3, pinned:true},
+  ];
+
+  async function loadNoticesForWidget(){
+    const keys = await storageList('notice:', true);
+    if(!storageAvailable(keys)) return FALLBACK_NOTICES;
+    const list = [];
+    for(const k of (keys||[])){
+      const raw = await storageGet(k, true);
+      if(raw){ try{ list.push(JSON.parse(raw)); }catch(e){} }
+    }
+    list.sort((a,b)=> (b.pinned - a.pinned) || (b.date - a.date));
+    return list;
+  }
+
+  (async function(){
+    const el = document.getElementById('utilNoticeText');
+    if(!el) return;
+    try{
+      const notices = await loadNoticesForWidget();
+      if(notices && notices.length){
+        el.textContent = notices[0].title;
+        el.parentElement.style.cursor='pointer';
+        el.parentElement.onclick = ()=>{ location.href = 'notice-board.html'; };
+      } else {
+        el.textContent = '등록된 공지사항이 없습니다.';
+      }
+    }catch(e){ el.textContent = '공지사항을 불러올 수 없습니다.'; }
+  })();
+  */
+
   const revealEls = document.querySelectorAll('.card, .loc-item, .pcard, .stat, .ov-row, .lu-row, .zone-card, figure, .tl-item, .step');
   revealEls.forEach(el => el.classList.add('reveal'));
   const io = new IntersectionObserver((entries)=>{
