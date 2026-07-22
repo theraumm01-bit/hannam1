@@ -156,7 +156,7 @@ footer{background:var(--navy-950); border-top:1px solid var(--line); padding:44p
       <span class="util-notice-text" id="utilNoticeText">공지사항을 불러오는 중...</span>
     </div>
     <div class="util-auth">
-      <a href="notice-board.html">공지사항</a>
+      <a href="/notice">공지사항</a>
       <span class="util-sep">|</span>
       <a href="auth.html">로그인</a>
       <span class="util-sep">|</span>
@@ -293,7 +293,7 @@ footer{background:var(--navy-950); border-top:1px solid var(--line); padding:44p
       <div class="foot-links">
         <a href="index.html">홈</a>
         <a href="index.html#why">신속통합기획</a>
-        <a href="notice-board.html">공지사항</a>
+        <a href="/notice">공지사항</a>
         <a href="inquiry-board.html">문의하기</a>
         <a href="auth.html">로그인/회원가입</a>
       </div>
@@ -305,76 +305,11 @@ footer{background:var(--navy-950); border-top:1px solid var(--line); padding:44p
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
 <script>
-
-async function storageGet(key, shared){ try{ const r = await window.storage.get(key, shared); return r ? r.value : null; }catch(e){ return undefined; } }
-async function storageSet(key, value, shared){ try{ return await window.storage.set(key, value, shared); }catch(e){ return undefined; } }
-async function storageDelete(key, shared){ try{ return await window.storage.delete(key, shared); }catch(e){ return undefined; } }
-async function storageList(prefix, shared){ try{ const r = await window.storage.list(prefix, shared); return r ? r.keys : null; }catch(e){ return undefined; } }
-function storageAvailable(v){ return v !== undefined; }
-function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmtDate(ts){ const d = new Date(ts); return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0'); }
-
-/* fallback in-memory seed (used only when window.storage is unavailable, e.g. outside Claude.ai) */
-const FALLBACK_NOTICES = [
-  {id:'seed1', title:'한남1구역 신속통합기획 홈페이지를 오픈했습니다', body:'추진준비위원회 공식 홈페이지가 오픈했습니다. 앞으로 정비계획 수립 현황을 이곳에 지속적으로 안내드리겠습니다.', pinned:true, date: Date.now()-1000*60*60*24*3},
-  {id:'seed2', title:'정비계획 수립 용역 진행 안내', body:'2025년 9월 발주된 정비계획 수립 용역이 진행 중입니다. 약 24개월간 진행될 예정이며 주요 단계마다 안내드리겠습니다.', pinned:false, date: Date.now()-1000*60*60*24*10},
-];
-
-async function loadNotices(){
-  const keys = await storageList('notice:', true);
-  if(!storageAvailable(keys)){
-    return FALLBACK_NOTICES.slice().sort((a,b)=>b.date-a.date);
-  }
-  const list = [];
-  for(const k of (keys||[])){
-    const raw = await storageGet(k, true);
-    if(raw){ try{ list.push(JSON.parse(raw)); }catch(e){} }
-  }
-  list.sort((a,b)=> (b.pinned - a.pinned) || (b.date - a.date));
-  return list;
-}
-async function saveNotice(n){ return await storageSet('notice:'+n.id, JSON.stringify(n), true); }
-async function deleteNotice(id){ return await storageDelete('notice:'+id, true); }
-
-async function loadInquiries(){
-  const keys = await storageList('inquiry:', true);
-  if(!storageAvailable(keys)) return [];
-  const list = [];
-  for(const k of (keys||[])){
-    const raw = await storageGet(k, true);
-    if(raw){ try{ list.push(JSON.parse(raw)); }catch(e){} }
-  }
-  list.sort((a,b)=>b.date-a.date);
-  return list;
-}
-async function saveInquiry(q){ return await storageSet('inquiry:'+q.id, JSON.stringify(q), true); }
-
-async function findUser(userid){
-  const raw = await storageGet('user:'+userid, true);
-  if(!storageAvailable(raw)) return undefined;
-  if(!raw) return null;
-  try{ return JSON.parse(raw); }catch(e){ return null; }
-}
-async function saveUser(u){ return await storageSet('user:'+u.userid, JSON.stringify(u), true); }
-
-
-(async function(){
-  const el = document.getElementById('utilNoticeText');
-  if(!el) return;
-  try{
-    const notices = await loadNotices();
-    if(notices && notices.length){
-      el.textContent = notices[0].title;
-      el.parentElement.style.cursor='pointer';
-      el.parentElement.onclick = ()=>{ location.href = 'notice-board.html'; };
-    } else {
-      el.textContent = '등록된 공지사항이 없습니다.';
-    }
-  }catch(e){ el.textContent = '공지사항을 불러올 수 없습니다.'; }
-})();
-
 
 let currentInquiries = [];
 let openingId = null;
@@ -382,6 +317,38 @@ let openingId = null;
 document.getElementById('qSecret').addEventListener('change', (e)=>{
   document.getElementById('secretFields').classList.toggle('show', e.target.checked);
 });
+
+async function loadInquiries(){
+  try {
+    const { data, error } = await supabaseClient.from('inquiries').select('*').order('created_at', {ascending: false});
+    if (error) throw error;
+    return data || [];
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
+
+async function saveInquiry(q){
+  try {
+    if (q.id && q.id.includes('-')) {
+        // uuid update (answer)
+        const { error } = await supabaseClient.from('inquiries').update({ answer: q.answer }).eq('id', q.id);
+        if (error) throw error;
+    } else {
+        // insert
+        const { error } = await supabaseClient.from('inquiries').insert([{
+            name: q.name, phone: q.phone, title: q.title, body: q.body,
+            secret: q.secret, pw: q.pw
+        }]);
+        if (error) throw error;
+    }
+    return { success: true };
+  } catch(e) {
+    console.error(e);
+    return undefined;
+  }
+}
 
 function renderList(){
   const box = document.getElementById('inquiryList');
@@ -395,7 +362,7 @@ function renderList(){
     <div class="board-item" data-id="${q.id}">
       <div class="b-no">${currentInquiries.length-i}</div>
       <div class="b-title">${q.secret ? '<span class="b-lock">🔒</span>' : ''}<span class="tt">${escapeHtml(q.title)}</span></div>
-      <div class="b-date">${fmtDate(q.date)}</div>
+      <div class="b-date">${fmtDate(q.created_at)}</div>
       <div><span class="badge ${q.answer ? 'badge-done' : 'badge-wait'}">${q.answer ? '답변완료' : '답변대기'}</span></div>
     </div>
   `).join('');
@@ -408,6 +375,15 @@ function tryOpen(id){
   const q = currentInquiries.find(x=>x.id===id);
   if(!q) return;
   if(q.secret){
+    const userStr = localStorage.getItem('user');
+    let isAdmin = false;
+    if(userStr) {
+      try { isAdmin = JSON.parse(userStr).role === 'admin'; } catch(e){}
+    }
+    if (isAdmin) {
+      openDetail(id);
+      return;
+    }
     openingId = id;
     document.getElementById('listView').style.display='none';
     document.getElementById('gateView').style.display='block';
@@ -440,7 +416,7 @@ function openDetail(id){
   document.getElementById('detailView').style.display='block';
   document.getElementById('dTitle').textContent = q.title;
   document.getElementById('dName').textContent = (q.name||'익명') + (q.name ? ' 님' : '');
-  document.getElementById('dDate').textContent = fmtDate(q.date);
+  document.getElementById('dDate').textContent = fmtDate(q.created_at);
   document.getElementById('dStatus').textContent = q.answer ? '답변완료' : '답변대기';
   document.getElementById('dStatus').className = 'badge ' + (q.answer ? 'badge-done' : 'badge-wait');
   document.getElementById('dBody').textContent = q.body;
@@ -450,13 +426,26 @@ function openDetail(id){
   } else {
     document.getElementById('dAnswerBox').style.display='none';
   }
-  document.getElementById('answerBody').value = q.answer || '';
-  document.getElementById('btnSaveAnswer').onclick = async ()=>{
-    q.answer = document.getElementById('answerBody').value.trim();
-    await saveInquiry(q);
-    await refresh();
-    openDetail(id);
-  };
+  
+  // admin check
+  const userStr = localStorage.getItem('user');
+  let isAdmin = false;
+  if(userStr) {
+    try { isAdmin = JSON.parse(userStr).role === 'admin'; } catch(e){}
+  }
+  const answerInputPanel = document.getElementById('answerBody').parentElement.parentElement;
+  if (isAdmin) {
+    answerInputPanel.style.display = 'block';
+    document.getElementById('answerBody').value = q.answer || '';
+    document.getElementById('btnSaveAnswer').onclick = async ()=>{
+      q.answer = document.getElementById('answerBody').value.trim();
+      await saveInquiry(q);
+      await refresh();
+      openDetail(id);
+    };
+  } else {
+    answerInputPanel.style.display = 'none';
+  }
 }
 document.getElementById('backToList').addEventListener('click', (e)=>{
   e.preventDefault();
@@ -485,12 +474,11 @@ document.getElementById('btnSaveInquiry').addEventListener('click', async ()=>{
   if(secret && pw.length < 4){ msg.textContent='비밀글은 4자 이상의 비밀번호가 필요합니다.'; msg.className='form-msg show err'; return; }
   if(!agree){ msg.textContent='개인정보 수집·이용 동의가 필요합니다.'; msg.className='form-msg show err'; return; }
 
-  const q = { id: uid(), name, phone, title, body, secret, pw: secret ? pw : '', answer:'', date: Date.now() };
+  const q = { name, phone, title, body, secret, pw: secret ? pw : '' };
   const saved = await saveInquiry(q);
-  if(saved === undefined){
-    msg.textContent = '현재 저장소를 사용할 수 없어(웹 미리보기 환경 등) 임시로만 표시됩니다. 실제 저장은 Claude.ai 아티팩트 환경에서 동작합니다.';
+  if(!saved){
+    msg.textContent = '통신 오류가 발생했습니다.';
     msg.className='form-msg show err';
-    currentInquiries.unshift(q); renderList();
     return;
   }
   msg.textContent = '문의가 등록되었습니다. 순차적으로 답변드리겠습니다.'; msg.className='form-msg show ok';
