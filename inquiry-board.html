@@ -1,500 +1,353 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>문의하기 · 한남1구역 신속통합기획</title>
-<meta name="theme-color" content="#0d1826">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-
-:root{
-  --navy-950:#000000; --navy-900:#050505; --navy-800:#0d0d0d; --navy-700:#1a1a1a; --navy-600:#262626;
-  --gold-500:#c9a468; --gold-400:#dfc08c; --gold-100:#f4e9d6; --ivory:#f6f2ea;
-  --mist:#9db0c7; --mist-dim:#6d7f96; --teal:#4fd1c0; --line:rgba(201,164,104,0.22);
-  --serif:'Noto Serif KR', serif; --sans:'Noto Sans KR', sans-serif; --maxw:1180px;
-}
-*{box-sizing:border-box; margin:0; padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--navy-900); color:var(--ivory); font-family:var(--sans); font-size:16.5px; line-height:1.65; -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:break-word;}
-a{color:inherit; text-decoration:none;}
-img,svg{display:block; max-width:100%;}
-.wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
-h1,h2,h3{font-family:var(--serif); font-weight:700; letter-spacing:-.01em;}
-h2{font-size:clamp(24px,3.2vw,34px); line-height:1.35; color:var(--ivory);}
-.eyebrow{font-size:13.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-400); font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:10px;}
-.eyebrow::before{content:''; width:22px; height:1px; background:var(--gold-500);}
-.lede{color:var(--mist); font-size:16px; max-width:640px; margin-top:12px;}
-::selection{background:var(--gold-500); color:var(--navy-950);}
-
-/* utility bar */
-.util-bar{background:var(--navy-950); border-bottom:1px solid var(--line); font-size:12.5px;}
-.util-bar-inner{display:flex; align-items:center; justify-content:space-between; padding:8px 28px; gap:16px; max-width:var(--maxw); margin:0 auto;}
-.util-notice{display:flex; align-items:center; gap:10px; color:var(--mist); overflow:hidden; min-width:0;}
-.util-notice-tag{flex-shrink:0; background:rgba(201,164,104,0.15); color:var(--gold-400); font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px;}
-.util-notice-text{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.util-auth{display:flex; align-items:center; gap:8px; color:var(--mist); flex-shrink:0;}
-.util-auth a:hover{color:var(--gold-400);}
-.util-sep{color:var(--mist-dim); opacity:.5;}
-@media (max-width:640px){ .util-bar-inner{padding:8px 18px;} .util-notice-tag{display:none;} }
-
-/* header */
-header{position:sticky; top:0; left:0; right:0; z-index:50; background:rgba(5,5,5,0.9); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,0.06);}
-.nav{display:flex; align-items:center; justify-content:space-between; padding:14px 28px; max-width:var(--maxw); margin:0 auto;}
-.brand{display:flex; align-items:center; gap:10px; font-family:var(--serif); font-weight:700; font-size:16.5px; letter-spacing:.02em;}
-.brand .mark{width:30px; height:30px; border:1px solid var(--gold-500); border-radius:3px; display:flex; align-items:center; justify-content:center; color:var(--gold-400); font-size:13px; font-weight:900;}
-.navlinks{display:flex; gap:26px; font-size:14.5px; color:var(--mist);}
-.navlinks a:hover{color:var(--gold-400);}
-.navcta{font-size:13.5px; border:1px solid var(--gold-500); color:var(--gold-400); padding:8px 16px; border-radius:999px; white-space:nowrap;}
-.navcta:hover{background:var(--gold-500); color:var(--navy-950);}
-@media (max-width:860px){ .navlinks{display:none;} }
-
-/* page hero (simple, non-image) */
-.page-hero{padding:64px 0 40px; background:linear-gradient(180deg, var(--navy-950), var(--navy-900)); border-bottom:1px solid var(--line);}
-
-.section{padding:56px 0 96px;}
-
-/* buttons */
-.btn{display:inline-flex; align-items:center; gap:8px; padding:13px 22px; border-radius:6px; font-size:15px; font-weight:600; cursor:pointer; border:none; transition:transform .15s ease, background .15s ease;}
-.btn-primary{background:var(--gold-500); color:var(--navy-950);}
-.btn-primary:hover{background:var(--gold-400); transform:translateY(-1px);}
-.btn-ghost{border:1px solid var(--navy-600); color:var(--ivory); background:transparent;}
-.btn-ghost:hover{border-color:var(--gold-500); color:var(--gold-400);}
-.btn-sm{padding:9px 16px; font-size:13.5px;}
-.btn[disabled]{opacity:.5; cursor:not-allowed;}
-
-/* card / panel */
-.panel{background:var(--navy-800); border:1px solid var(--line); border-radius:12px; padding:32px;}
-@media (max-width:640px){.panel{padding:22px;}}
-
-/* forms */
-.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px 18px; margin-top:8px;}
-@media (max-width:700px){.form-grid{grid-template-columns:1fr;}}
-.form-row{display:flex; flex-direction:column; gap:7px;}
-.form-row.full{grid-column:1 / -1;}
-.form-row label{font-size:13.5px; color:var(--mist);}
-.form-row label .req{color:var(--gold-500); margin-left:3px;}
-input[type=text], input[type=password], input[type=tel], input[type=email], textarea, select{
-  background:var(--navy-950); border:1px solid var(--line); color:var(--ivory);
-  padding:12px 14px; border-radius:7px; font-size:15px; font-family:var(--sans); width:100%;
-}
-input:focus, textarea:focus, select:focus{outline:none; border-color:var(--gold-500);}
-textarea{resize:vertical; min-height:140px;}
-.checkbox-row{display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--mist);}
-.checkbox-row input[type=checkbox]{margin-top:3px; width:16px; height:16px; accent-color:var(--gold-500); flex-shrink:0;}
-.checkbox-row a{color:var(--gold-400); text-decoration:underline;}
-.form-actions{display:flex; gap:12px; margin-top:26px; flex-wrap:wrap;}
-.form-note{font-size:12.5px; color:var(--mist-dim); margin-top:10px; line-height:1.6;}
-.form-msg{font-size:13.5px; margin-top:14px; padding:12px 14px; border-radius:7px; display:none;}
-.form-msg.show{display:block;}
-.form-msg.ok{background:rgba(79,209,192,0.12); color:var(--teal); border:1px solid rgba(79,209,192,0.3);}
-.form-msg.err{background:rgba(200,90,90,0.12); color:#e08a8a; border:1px solid rgba(200,90,90,0.3);}
-
-/* tabs */
-.tab-switch{display:flex; gap:8px; margin-bottom:28px; border-bottom:1px solid var(--line);}
-.tab-btn{padding:12px 22px; font-size:15px; font-weight:600; color:var(--mist-dim); border-bottom:2px solid transparent; cursor:pointer; background:none; border-top:none; border-left:none; border-right:none;}
-.tab-btn.active{color:var(--gold-400); border-bottom-color:var(--gold-500);}
-.tab-panel{display:none;}
-.tab-panel.active{display:block;}
-
-/* board list */
-.board-toolbar{display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:18px; flex-wrap:wrap;}
-.board-count{font-size:13.5px; color:var(--mist-dim);}
-.board-list{border-top:1px solid var(--line);}
-.board-item{display:grid; grid-template-columns:70px 1fr 110px 90px; align-items:center; gap:14px; padding:18px 6px; border-bottom:1px solid var(--line); cursor:pointer;}
-.board-item:hover{background:rgba(255,255,255,0.02);}
-@media (max-width:700px){.board-item{grid-template-columns:1fr 70px; grid-template-areas:"title status" "meta meta"; row-gap:6px;}
-  .board-item .b-no{display:none;} .board-item .b-title{grid-area:title;} .board-item .b-status{grid-area:status; justify-self:end;} .board-item .b-date{grid-area:meta; font-size:12px;}}
-.b-no{color:var(--mist-dim); font-size:13px; text-align:center;}
-.b-title{font-size:15.5px; font-weight:600; display:flex; align-items:center; gap:8px; min-width:0;}
-.b-title span.tt{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-.b-lock{color:var(--mist-dim); flex-shrink:0;}
-.b-date{color:var(--mist-dim); font-size:13px; text-align:center;}
-.badge{display:inline-block; font-size:11.5px; padding:3px 10px; border-radius:999px; white-space:nowrap; text-align:center;}
-.badge-wait{background:var(--navy-700); color:var(--mist-dim);}
-.badge-done{background:rgba(201,164,104,0.16); color:var(--gold-400);}
-.badge-pin{background:rgba(201,164,104,0.18); color:var(--gold-400);}
-.board-empty{padding:60px 10px; text-align:center; color:var(--mist-dim); font-size:14.5px;}
-
-/* detail view */
-.detail-head{padding-bottom:18px; border-bottom:1px solid var(--line); margin-bottom:22px;}
-.detail-title{font-family:var(--serif); font-size:22px; font-weight:700; margin-bottom:10px;}
-.detail-meta{font-size:13px; color:var(--mist-dim); display:flex; gap:14px; flex-wrap:wrap;}
-.detail-body{font-size:15.5px; color:var(--ivory); line-height:1.85; white-space:pre-wrap; min-height:80px;}
-.detail-answer{margin-top:26px; padding:20px 22px; border-left:2px solid var(--gold-500); background:rgba(201,164,104,0.06); border-radius:0 8px 8px 0;}
-.detail-answer .aa-tag{font-size:12px; color:var(--gold-400); font-weight:700; margin-bottom:8px;}
-.back-link{display:inline-flex; align-items:center; gap:6px; font-size:13.5px; color:var(--mist); margin-bottom:22px;}
-.back-link:hover{color:var(--gold-400);}
-
-footer{background:var(--navy-950); border-top:1px solid var(--line); padding:44px 0 30px; margin-top:40px;}
-.foot-top{display:flex; justify-content:space-between; gap:30px; flex-wrap:wrap; padding-bottom:22px; border-bottom:1px solid var(--line);}
-.foot-brand{font-family:var(--serif); font-weight:700; font-size:16px; color:var(--gold-400);}
-.foot-links{display:flex; gap:22px; font-size:14px; color:var(--mist); flex-wrap:wrap;}
-.disclaimer{font-size:12.5px; color:var(--mist-dim); margin-top:20px; line-height:1.7;}
-
-
-.write-toggle{margin-bottom:18px;}
-#writePanel{display:none; margin-bottom:26px;}
-#writePanel.show{display:block;}
-.secret-fields{display:none; margin-top:14px;}
-.secret-fields.show{display:block;}
-.pw-gate{max-width:360px; margin:60px auto; text-align:center;}
-.pw-gate input{margin-top:14px; text-align:center;}
-.admin-note{font-size:12px; color:var(--mist-dim); margin-top:8px;}
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>문의하기 · 한남1구역 신속통합기획</title>
+  <meta name="theme-color" content="#0d1826">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 
-<div class="util-bar">
-  <div class="wrap util-bar-inner">
-    <div class="util-notice">
-      <span class="util-notice-tag">공지</span>
-      <span class="util-notice-text" id="utilNoticeText">공지사항을 불러오는 중...</span>
-    </div>
-    <div class="util-auth">
-      <a href="/notice">공지사항</a>
-      <span class="util-sep">|</span>
-      <a href="auth.html">로그인</a>
-      <span class="util-sep">|</span>
-      <a href="auth.html?tab=signup">회원가입</a>
+  <div class="util-bar">
+    <div class="wrap util-bar-inner">
+      <div class="util-notice">
+        <span class="util-notice-tag">공지</span>
+        <span class="util-notice-text" id="utilNoticeText">공지사항을 불러오는 중...</span>
+      </div>
+      <div class="util-auth">
+        <a href="notice-board.html">공지사항</a>
+        <span class="util-sep">|</span>
+        <a href="inquiry-board.html">문의하기</a>
+        <span class="util-sep">|</span>
+        <a href="auth.html">로그인</a>
+        <span class="util-sep">|</span>
+        <a href="auth.html?tab=signup">회원가입</a>
+      </div>
     </div>
   </div>
-</div>
 
 
-<header>
-  <div class="nav">
-    <a href="index.html" class="brand"><span class="mark">南</span>한남1구역 신속통합기획 추진위원회</a>
-    <nav class="navlinks">
-      <a href="index.html#story">왜 지금인가</a>
-      <a href="index.html#why">신속통합기획</a>
-      <a href="index.html#location">입지</a>
-      <a href="index.html#zones">Zone계획</a>
-      <a href="index.html#process">추진현황</a>
-    </nav>
-    <a class="navcta" href="inquiry-board.html">문의하기 →</a>
-  </div>
-</header>
-
-
-<section class="page-hero">
-  <div class="wrap">
-    <div class="eyebrow">궁금한 점을 남겨주세요</div>
-    <h2>문의하기</h2>
-    <p class="lede">정비계획 수립 현황, 조합 참여, 사업지 소유 관련 문의 등을 남겨주시면 추진위원회에서 순차적으로 답변드립니다.</p>
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap">
-    <div class="write-toggle">
-      <button class="btn btn-primary btn-sm" id="btnToggleWrite">+ 문의 작성하기</button>
+  <header>
+    <div class="nav">
+      <a href="index.html" class="brand"><span class="mark">南</span>한남1구역 신속통합기획 추진위원회</a>
+      <nav class="navlinks">
+        <a href="index.html#story">왜 지금인가</a>
+        <a href="index.html#why">신속통합기획</a>
+        <a href="index.html#location">입지</a>
+        <a href="index.html#zones">Zone계획</a>
+        <a href="index.html#process">추진현황</a>
+      </nav>
+      <a class="navcta" href="inquiry-board.html">문의하기 →</a>
     </div>
+  </header>
 
-    <div class="panel" id="writePanel">
-      <div class="form-grid">
-        <div class="form-row">
-          <label>성함 <span class="req">*</span></label>
-          <input type="text" id="qName" placeholder="이름을 입력하세요">
-        </div>
-        <div class="form-row">
-          <label>연락처</label>
-          <input type="tel" id="qPhone" placeholder="010-0000-0000">
-        </div>
-        <div class="form-row full">
-          <label>제목 <span class="req">*</span></label>
-          <input type="text" id="qTitle" placeholder="문의 제목을 입력하세요">
-        </div>
-        <div class="form-row full">
-          <label>내용 <span class="req">*</span></label>
-          <textarea id="qBody" placeholder="문의 내용을 입력하세요"></textarea>
-        </div>
-        <div class="form-row full">
-          <div class="checkbox-row">
-            <input type="checkbox" id="qSecret">
-            <label for="qSecret">비밀글로 작성 (비밀번호를 아는 사람만 열람 가능)</label>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="eyebrow">궁금한 점을 남겨주세요</div>
+      <h2>문의하기</h2>
+      <p class="lede">정비계획 수립 현황, 조합 참여, 사업지 소유 관련 문의 등을 남겨주시면 추진위원회에서 순차적으로 답변드립니다.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="write-toggle">
+        <button class="btn btn-primary btn-sm" id="btnToggleWrite">+ 문의 작성하기</button>
+      </div>
+
+      <div class="panel" id="writePanel">
+        <div class="form-grid">
+          <div class="form-row">
+            <label>성함 <span class="req">*</span></label>
+            <input type="text" id="qName" placeholder="이름을 입력하세요">
           </div>
-          <div class="secret-fields" id="secretFields">
-            <input type="password" id="qPw" placeholder="글 비밀번호 (4자 이상)" maxlength="16">
+          <div class="form-row">
+            <label>연락처</label>
+            <input type="tel" id="qPhone" placeholder="010-0000-0000">
           </div>
-        </div>
-        <div class="form-row full">
-          <div class="checkbox-row">
-            <input type="checkbox" id="qAgreePrivacy">
-            <label for="qAgreePrivacy">문의 처리를 위한 개인정보(성함·연락처·문의내용) 수집·이용에 동의합니다. <span class="req">*</span></label>
+          <div class="form-row full">
+            <label>비밀번호 <span class="req">*</span></label>
+            <input type="password" id="qPassword" placeholder="비밀번호를 입력하세요">
           </div>
-        </div>
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-primary" id="btnSaveInquiry">등록하기</button>
-        <button class="btn btn-ghost" id="btnCancelWrite">취소</button>
-      </div>
-      <div class="form-msg" id="inquiryMsg"></div>
-      <div class="admin-note">※ 데모 페이지입니다. 실제 운영 시에는 서버·암호화 저장이 필요하며, 지금은 브라우저 미리보기(Claude 아티팩트) 환경에서만 저장이 유지됩니다.</div>
-    </div>
-
-    <div id="listView">
-      <div class="board-toolbar">
-        <div class="board-count" id="inquiryCount">불러오는 중...</div>
-      </div>
-      <div class="board-list" id="inquiryList"></div>
-    </div>
-
-    <div id="gateView" style="display:none;">
-      <div class="panel pw-gate">
-        <div class="eyebrow" style="justify-content:center;">비밀글</div>
-        <p style="color:var(--mist); font-size:14.5px;">이 글은 비밀번호가 설정된 글입니다.<br>작성 시 입력한 비밀번호를 입력해주세요.</p>
-        <input type="password" id="gatePw" placeholder="비밀번호">
-        <div class="form-actions" style="justify-content:center;">
-          <button class="btn btn-primary btn-sm" id="btnUnlock">확인</button>
-          <button class="btn btn-ghost btn-sm" id="btnGateCancel">취소</button>
-        </div>
-        <div class="form-msg" id="gateMsg"></div>
-      </div>
-    </div>
-
-    <div id="detailView" style="display:none;">
-      <a class="back-link" id="backToList" href="#">← 목록으로</a>
-      <div class="detail-head">
-        <div class="detail-title" id="dTitle"></div>
-        <div class="detail-meta">
-          <span id="dName"></span><span id="dDate"></span>
-          <span class="badge badge-wait" id="dStatus"></span>
-        </div>
-      </div>
-      <div class="detail-body" id="dBody"></div>
-      <div class="detail-answer" id="dAnswerBox" style="display:none;">
-        <div class="aa-tag">추진위원회 답변</div>
-        <div id="dAnswer"></div>
-      </div>
-
-      <div class="panel" style="margin-top:30px;">
-        <div class="form-row full">
-          <label>답변 작성 (관리자용 데모)</label>
-          <textarea id="answerBody" placeholder="답변 내용을 입력하세요"></textarea>
+          <div class="form-row full">
+            <label>제목 <span class="req">*</span></label>
+            <input type="text" id="qTitle" placeholder="문의 제목을 입력하세요">
+          </div>
+          <div class="form-row full">
+            <label>내용 <span class="req">*</span></label>
+            <textarea id="qBody" placeholder="문의 내용을 입력하세요"></textarea>
+          </div>
+          <div class="form-row full">
+            <div class="checkbox-row">
+              <input type="checkbox" id="qAgreePrivacy">
+              <label for="qAgreePrivacy">문의 처리를 위한 개인정보(성함·연락처·문의내용) 수집·이용에 동의합니다. <span class="req">*</span></label>
+            </div>
+          </div>
         </div>
         <div class="form-actions">
-          <button class="btn btn-ghost btn-sm" id="btnSaveAnswer">답변 등록</button>
+          <button class="btn btn-primary" id="btnSaveInquiry">등록하기</button>
+          <button class="btn btn-ghost" id="btnCancelWrite">취소</button>
+        </div>
+        <div class="form-msg" id="inquiryMsg"></div>
+      </div>
+
+      <div id="listView">
+        <div class="board-toolbar">
+          <div class="board-count" id="inquiryCount">불러오는 중...</div>
+        </div>
+        <div class="board-list" id="inquiryList"></div>
+      </div>
+
+      <div id="detailView" style="display:none;">
+        <a class="back-link" id="backToList" href="#">← 목록으로</a>
+        <div class="detail-head">
+          <div class="detail-title" id="dTitle"></div>
+          <div class="detail-meta">
+            <span id="dName"></span><span id="dDate"></span>
+            <span class="badge badge-wait" id="dStatus"></span>
+          </div>
+        </div>
+        <div class="detail-body" id="dBody"></div>
+        <div class="detail-answer" id="dAnswerBox" style="display:none;">
+          <div class="aa-tag">추진위원회 답변</div>
+          <div id="dAnswer" style="display:none;"></div>
+          <button id="btnUnlockAnswer" class="btn btn-ghost btn-sm" style="margin-top:10px; display:none;">답변 확인하기 (비밀번호
+            필요)</button>
+        </div>
+
+        <div class="panel" style="margin-top:30px;">
+          <div class="form-row full">
+            <label>답변 작성</label>
+            <textarea id="answerBody" placeholder="답변 내용을 입력하세요"></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-ghost btn-sm" id="btnSaveAnswer">답변 등록</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
 
-<footer>
-  <div class="wrap">
-    <div class="foot-top">
-      <div class="foot-brand">한남1구역 신속통합기획 추진위원회</div>
-      <div class="foot-links">
-        <a href="index.html">홈</a>
-        <a href="index.html#why">신속통합기획</a>
-        <a href="/notice">공지사항</a>
-        <a href="inquiry-board.html">문의하기</a>
-        <a href="auth.html">로그인/회원가입</a>
+  <footer>
+    <div class="wrap">
+      <div class="foot-top">
+        <div class="foot-brand">한남1구역 신속통합기획 추진위원회</div>
+        <div class="foot-links">
+          <a href="index.html">홈</a>
+          <a href="index.html#why">신속통합기획</a>
+          <a href="/notice">공지사항</a>
+          <a href="inquiry-board.html">문의하기</a>
+          <a href="auth.html">로그인/회원가입</a>
+        </div>
       </div>
+      <!--<div class="disclaimer">
+        본 페이지는 한남1구역 신속통합기획 추진을 안내하는 자료입니다. 게시판·회원가입 기능은 데모 단계로 제공되며, 실제 서비스 운영 시에는 보안 서버 연동이 필요합니다. 개인정보(성함·연락처·주소 등)는
+        실제 사업과 무관한 용도로 저장되지 않도록 유의해 주세요.
+      </div> -->
     </div>
-    <div class="disclaimer">
-      본 페이지는 한남1구역 신속통합기획 추진을 안내하는 자료입니다. 게시판·회원가입 기능은 데모 단계로 제공되며, 실제 서비스 운영 시에는 보안 서버 연동이 필요합니다. 개인정보(성함·연락처·주소 등)는 실제 사업과 무관한 용도로 저장되지 않도록 유의해 주세요.
-    </div>
-  </div>
-</footer>
+  </footer>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-client.js"></script>
-<script>
-function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function fmtDate(ts){ const d = new Date(ts); return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0'); }
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script>
+    function escapeHtml(s) { return (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+    function fmtDate(ts) { const d = new Date(ts); return d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0'); }
 
-let currentInquiries = [];
-let openingId = null;
+    let currentInquiries = [];
 
-document.getElementById('qSecret').addEventListener('change', (e)=>{
-  document.getElementById('secretFields').classList.toggle('show', e.target.checked);
-});
+    async function loadInquiries() {
+      try {
+        let query = supabaseClient.from('inquiries').select('*').order('created_at', { ascending: false });
 
-async function loadInquiries(){
-  try {
-    const { data, error } = await supabaseClient.from('inquiries').select('*').order('created_at', {ascending: false});
-    if (error) throw error;
-    return data || [];
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
-}
-
-async function saveInquiry(q){
-  try {
-    if (q.id && q.id.includes('-')) {
-        // uuid update (answer)
-        const { error } = await supabaseClient.from('inquiries').update({ answer: q.answer }).eq('id', q.id);
+        const { data, error } = await query;
         if (error) throw error;
-    } else {
-        // insert
-        const { error } = await supabaseClient.from('inquiries').insert([{
-            name: q.name, phone: q.phone, title: q.title, body: q.body,
-            secret: q.secret, pw: q.pw
-        }]);
-        if (error) throw error;
+        return data || [];
+      } catch (e) {
+        console.error(e);
+        return [];
+      }
     }
-    return { success: true };
-  } catch(e) {
-    console.error(e);
-    return undefined;
-  }
-}
 
-function renderList(){
-  const box = document.getElementById('inquiryList');
-  const countEl = document.getElementById('inquiryCount');
-  countEl.textContent = '전체 ' + currentInquiries.length + '건';
-  if(!currentInquiries.length){
-    box.innerHTML = '<div class="board-empty">등록된 문의가 없습니다. 첫 문의를 남겨주세요.</div>';
-    return;
-  }
-  box.innerHTML = currentInquiries.map((q,i)=>`
+    async function saveInquiry(q) {
+      try {
+        if (q.id && q.id.includes('-')) {
+          // uuid update (answer)
+          const { error } = await supabaseClient.from('inquiries').update({ answer: q.answer }).eq('id', q.id);
+          if (error) throw error;
+        } else {
+          // insert
+          const { error } = await supabaseClient.from('inquiries').insert([{
+            name: q.name, phone: q.phone, title: q.title, body: q.body, pw: q.password
+          }]);
+          if (error) throw error;
+        }
+        return { success: true };
+      } catch (e) {
+        console.error(e);
+        return undefined;
+      }
+    }
+
+    function renderList() {
+      const box = document.getElementById('inquiryList');
+      const countEl = document.getElementById('inquiryCount');
+      countEl.textContent = '전체 ' + currentInquiries.length + '건';
+      if (!currentInquiries.length) {
+        box.innerHTML = '<div class="board-empty">등록된 문의가 없습니다. 첫 문의를 남겨주세요.</div>';
+        return;
+      }
+      box.innerHTML = currentInquiries.map((q, i) => `
     <div class="board-item" data-id="${q.id}">
-      <div class="b-no">${currentInquiries.length-i}</div>
-      <div class="b-title">${q.secret ? '<span class="b-lock">🔒</span>' : ''}<span class="tt">${escapeHtml(q.title)}</span></div>
+      <div class="b-no">${currentInquiries.length - i}</div>
+      <div class="b-title"><span class="tt">${escapeHtml(q.title)}</span></div>
       <div class="b-date">${fmtDate(q.created_at)}</div>
       <div><span class="badge ${q.answer ? 'badge-done' : 'badge-wait'}">${q.answer ? '답변완료' : '답변대기'}</span></div>
     </div>
   `).join('');
-  box.querySelectorAll('.board-item').forEach(el=>{
-    el.addEventListener('click', ()=> tryOpen(el.getAttribute('data-id')));
-  });
-}
-
-function tryOpen(id){
-  const q = currentInquiries.find(x=>x.id===id);
-  if(!q) return;
-  if(q.secret){
-    const userStr = localStorage.getItem('user');
-    let isAdmin = false;
-    if(userStr) {
-      try { isAdmin = JSON.parse(userStr).role === 'admin'; } catch(e){}
+      box.querySelectorAll('.board-item').forEach(el => {
+        el.addEventListener('click', () => tryOpen(el.getAttribute('data-id')));
+      });
     }
-    if (isAdmin) {
+
+    function tryOpen(id) {
+      const q = currentInquiries.find(x => x.id === id);
+      if (!q) return;
       openDetail(id);
-      return;
     }
-    openingId = id;
-    document.getElementById('listView').style.display='none';
-    document.getElementById('gateView').style.display='block';
-    document.getElementById('gatePw').value='';
-    document.getElementById('gateMsg').className='form-msg';
-  } else {
-    openDetail(id);
-  }
-}
-document.getElementById('btnUnlock').addEventListener('click', ()=>{
-  const q = currentInquiries.find(x=>x.id===openingId);
-  const val = document.getElementById('gatePw').value;
-  const msg = document.getElementById('gateMsg');
-  if(q && val === q.pw){
-    document.getElementById('gateView').style.display='none';
-    openDetail(openingId);
-  } else {
-    msg.textContent = '비밀번호가 일치하지 않습니다.'; msg.className='form-msg show err';
-  }
-});
-document.getElementById('btnGateCancel').addEventListener('click', ()=>{
-  document.getElementById('gateView').style.display='none';
-  document.getElementById('listView').style.display='block';
-});
 
-function openDetail(id){
-  const q = currentInquiries.find(x=>x.id===id);
-  if(!q) return;
-  document.getElementById('listView').style.display='none';
-  document.getElementById('detailView').style.display='block';
-  document.getElementById('dTitle').textContent = q.title;
-  document.getElementById('dName').textContent = (q.name||'익명') + (q.name ? ' 님' : '');
-  document.getElementById('dDate').textContent = fmtDate(q.created_at);
-  document.getElementById('dStatus').textContent = q.answer ? '답변완료' : '답변대기';
-  document.getElementById('dStatus').className = 'badge ' + (q.answer ? 'badge-done' : 'badge-wait');
-  document.getElementById('dBody').textContent = q.body;
-  if(q.answer){
-    document.getElementById('dAnswerBox').style.display='block';
-    document.getElementById('dAnswer').textContent = q.answer;
-  } else {
-    document.getElementById('dAnswerBox').style.display='none';
-  }
-  
-  // admin check
-  const userStr = localStorage.getItem('user');
-  let isAdmin = false;
-  if(userStr) {
-    try { isAdmin = JSON.parse(userStr).role === 'admin'; } catch(e){}
-  }
-  const answerInputPanel = document.getElementById('answerBody').parentElement.parentElement;
-  if (isAdmin) {
-    answerInputPanel.style.display = 'block';
-    document.getElementById('answerBody').value = q.answer || '';
-    document.getElementById('btnSaveAnswer').onclick = async ()=>{
-      q.answer = document.getElementById('answerBody').value.trim();
-      await saveInquiry(q);
+    function openDetail(id) {
+      const q = currentInquiries.find(x => x.id === id);
+      if (!q) return;
+      document.getElementById('listView').style.display = 'none';
+      document.getElementById('detailView').style.display = 'block';
+      document.getElementById('dTitle').textContent = q.title;
+      document.getElementById('dName').textContent = (q.name || '익명') + (q.name ? ' 님' : '');
+      document.getElementById('dDate').textContent = fmtDate(q.created_at);
+      document.getElementById('dStatus').textContent = q.answer ? '답변완료' : '답변대기';
+      document.getElementById('dStatus').className = 'badge ' + (q.answer ? 'badge-done' : 'badge-wait');
+      document.getElementById('dBody').textContent = q.body;
+      // admin check
+      const userStr = localStorage.getItem('user');
+      let isAdmin = false;
+      if (userStr) {
+        try { isAdmin = JSON.parse(userStr).role === 'admin'; } catch (e) { }
+      }
+
+      if (q.answer) {
+        document.getElementById('dAnswerBox').style.display = 'block';
+        document.getElementById('dAnswer').textContent = q.answer;
+
+        const ansEl = document.getElementById('dAnswer');
+        const btnUnlock = document.getElementById('btnUnlockAnswer');
+
+        if (isAdmin || !q.pw) {
+          ansEl.style.display = 'block';
+          btnUnlock.style.display = 'none';
+        } else {
+          ansEl.style.display = 'none';
+          btnUnlock.style.display = 'inline-block';
+          btnUnlock.onclick = () => {
+            window.showCustomPrompt('게시글 비밀번호를 입력하세요.', (inputPw) => {
+              if (inputPw === q.pw) {
+                ansEl.style.display = 'block';
+                btnUnlock.style.display = 'none';
+              } else {
+                window.showCustomAlert('비밀번호가 일치하지 않습니다.');
+              }
+            }, { isPassword: true });
+          };
+        }
+      } else {
+        document.getElementById('dAnswerBox').style.display = 'none';
+      }
+
+      const answerInputPanel = document.getElementById('answerBody').parentElement.parentElement;
+      if (isAdmin) {
+        answerInputPanel.style.display = 'block';
+        document.getElementById('answerBody').value = q.answer || '';
+        document.getElementById('btnSaveAnswer').onclick = async () => {
+          q.answer = document.getElementById('answerBody').value.trim();
+          await saveInquiry(q);
+          await refresh();
+          openDetail(id);
+        };
+      } else {
+        answerInputPanel.style.display = 'none';
+      }
+    }
+    document.getElementById('backToList').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('detailView').style.display = 'none';
+      document.getElementById('listView').style.display = 'block';
+    });
+
+    document.getElementById('btnToggleWrite').addEventListener('click', () => {
+      const userStr = localStorage.getItem('user');
+      if (!userStr) {
+        window.showCustomConfirm('로그인이 필요한 서비스입니다.<br>로그인 화면으로 이동하시겠습니까?', () => {
+          window.location.href = 'auth.html';
+        });
+        return;
+      }
+
+      try {
+        const user = JSON.parse(userStr);
+        if (user.name) document.getElementById('qName').value = user.name;
+        if (user.phone) document.getElementById('qPhone').value = user.phone;
+      } catch (e) { }
+
+      document.getElementById('writePanel').classList.toggle('show');
+    });
+    document.getElementById('btnCancelWrite').addEventListener('click', () => {
+      document.getElementById('writePanel').classList.remove('show');
+    });
+
+    document.getElementById('btnSaveInquiry').addEventListener('click', async () => {
+      const name = document.getElementById('qName').value.trim();
+      const phone = document.getElementById('qPhone').value.trim();
+      const password = document.getElementById('qPassword').value.trim();
+      const title = document.getElementById('qTitle').value.trim();
+      const body = document.getElementById('qBody').value.trim();
+      const agree = document.getElementById('qAgreePrivacy').checked;
+      const msg = document.getElementById('inquiryMsg');
+
+      if (!name || !password || !title || !body) { msg.textContent = '성함·비밀번호·제목·내용을 모두 입력해주세요.'; msg.className = 'form-msg show err'; return; }
+      if (!agree) { msg.textContent = '개인정보 수집·이용 동의가 필요합니다.'; msg.className = 'form-msg show err'; return; }
+
+      const q = { name, phone, password, title, body };
+      const saved = await saveInquiry(q);
+      if (!saved) {
+        msg.textContent = '통신 오류가 발생했습니다.';
+        msg.className = 'form-msg show err';
+        return;
+      }
+      window.showCustomAlert('문의가 등록되었습니다.<br>순차적으로 답변드리겠습니다.');
+      msg.className = 'form-msg';
+      ['qTitle', 'qBody', 'qPassword'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('qAgreePrivacy').checked = false;
+      document.getElementById('writePanel').classList.remove('show');
       await refresh();
-      openDetail(id);
-    };
-  } else {
-    answerInputPanel.style.display = 'none';
-  }
-}
-document.getElementById('backToList').addEventListener('click', (e)=>{
-  e.preventDefault();
-  document.getElementById('detailView').style.display='none';
-  document.getElementById('listView').style.display='block';
-});
+    });
 
-document.getElementById('btnToggleWrite').addEventListener('click', ()=>{
-  document.getElementById('writePanel').classList.toggle('show');
-});
-document.getElementById('btnCancelWrite').addEventListener('click', ()=>{
-  document.getElementById('writePanel').classList.remove('show');
-});
-
-document.getElementById('btnSaveInquiry').addEventListener('click', async ()=>{
-  const name = document.getElementById('qName').value.trim();
-  const phone = document.getElementById('qPhone').value.trim();
-  const title = document.getElementById('qTitle').value.trim();
-  const body = document.getElementById('qBody').value.trim();
-  const secret = document.getElementById('qSecret').checked;
-  const pw = document.getElementById('qPw').value.trim();
-  const agree = document.getElementById('qAgreePrivacy').checked;
-  const msg = document.getElementById('inquiryMsg');
-
-  if(!name || !title || !body){ msg.textContent='성함·제목·내용을 모두 입력해주세요.'; msg.className='form-msg show err'; return; }
-  if(secret && pw.length < 4){ msg.textContent='비밀글은 4자 이상의 비밀번호가 필요합니다.'; msg.className='form-msg show err'; return; }
-  if(!agree){ msg.textContent='개인정보 수집·이용 동의가 필요합니다.'; msg.className='form-msg show err'; return; }
-
-  const q = { name, phone, title, body, secret, pw: secret ? pw : '' };
-  const saved = await saveInquiry(q);
-  if(!saved){
-    msg.textContent = '통신 오류가 발생했습니다.';
-    msg.className='form-msg show err';
-    return;
-  }
-  msg.textContent = '문의가 등록되었습니다. 순차적으로 답변드리겠습니다.'; msg.className='form-msg show ok';
-  ['qName','qPhone','qTitle','qBody','qPw'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('qSecret').checked=false;
-  document.getElementById('secretFields').classList.remove('show');
-  document.getElementById('qAgreePrivacy').checked=false;
-  await refresh();
-});
-
-async function refresh(){
-  currentInquiries = await loadInquiries();
-  renderList();
-}
-refresh();
-</script>
+    async function refresh() {
+      currentInquiries = await loadInquiries();
+      renderList();
+    }
+    refresh();
+  </script>
 
 </body>
+
 </html>

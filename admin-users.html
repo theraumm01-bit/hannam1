@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>회원 관리 · 한남1구역 신속통합기획</title>
+  <meta name="theme-color" content="#0d1826">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .user-item {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .user-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .user-meta {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .user-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .badge-approved {
+      background-color: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+      border: 1px solid rgba(76, 175, 80, 0.5);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
+    .badge-rejected {
+      background-color: rgba(244, 67, 54, 0.2);
+      color: #F44336;
+      border: 1px solid rgba(244, 67, 54, 0.5);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
+    .badge-wait2 {
+      background-color: rgba(201, 164, 104, 0.2);
+      color: #c9a468;
+      border: 1px solid rgba(201, 164, 104, 0.5);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="util-bar">
+    <div class="wrap util-bar-inner">
+      <div class="util-notice">
+        <span class="util-notice-tag">공지</span>
+        <span class="util-notice-text" id="utilNoticeText">공지사항을 불러오는 중...</span>
+      </div>
+      <div class="util-auth">
+        <!-- Auth updated via JS -->
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="nav">
+      <a href="index.html" class="brand"><span class="mark">南</span>한남1구역 신속통합기획 추진위원회</a>
+      <nav class="navlinks">
+        <a href="index.html#story">왜 지금인가</a>
+        <a href="index.html#why">신속통합기획</a>
+        <a href="index.html#location">입지</a>
+        <a href="index.html#zones">Zone계획</a>
+        <a href="index.html#process">추진현황</a>
+      </nav>
+      <a class="navcta" href="inquiry-board.html">문의하기 →</a>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="eyebrow">관리자 전용</div>
+      <h2>회원 관리 (가입 승인)</h2>
+      <p class="lede">가입을 신청한 회원 목록을 확인하고 승인 또는 거절 처리할 수 있습니다.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div id="listView">
+        <div class="board-toolbar">
+          <div class="board-count" id="userCount">불러오는 중...</div>
+        </div>
+        <div class="board-list" id="userList"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-top">
+        <div class="foot-brand">한남1구역 신속통합기획 추진위원회</div>
+        <div class="foot-links">
+          <a href="index.html">홈</a>
+          <a href="index.html#why">신속통합기획</a>
+          <a href="/notice">공지사항</a>
+          <a href="inquiry-board.html">문의하기</a>
+          <a href="auth.html">로그인/회원가입</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 관리자 권한 체크
+      const userStr = localStorage.getItem('user');
+      let isAdmin = false;
+      if (userStr) {
+        try { isAdmin = JSON.parse(userStr).role === 'admin'; } catch (e) { }
+      }
+
+      if (!isAdmin) {
+        window.showCustomAlert('관리자 전용 페이지입니다.');
+        setTimeout(() => { location.href = 'index.html'; }, 1500);
+        return;
+      }
+
+      loadUsers();
+    });
+
+    async function loadUsers() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('users')
+          .select('*');
+
+        if (error) throw error;
+
+        const filteredUsers = (data || []).filter(u => u.role !== 'admin');
+        renderUsers(filteredUsers);
+      } catch (e) {
+        console.error(e);
+        document.getElementById('userList').innerHTML = '<div class="board-empty">회원 목록을 불러올 수 없습니다.</div>';
+      }
+    }
+
+    function renderUsers(users) {
+      const box = document.getElementById('userList');
+      const countEl = document.getElementById('userCount');
+
+      countEl.textContent = '전체 가입자 ' + users.length + '명';
+
+      if (!users.length) {
+        box.innerHTML = '<div class="board-empty">가입한 회원이 없습니다.</div>';
+        return;
+      }
+
+      box.innerHTML = users.map(u => {
+        let statusBadge = '';
+        let actionBtns = '';
+
+        if (u.status === 'pending') {
+          statusBadge = `<span class="badge-wait2">대기중</span>`;
+          actionBtns = `
+                <button class="btn btn-primary btn-sm" onclick="updateStatus('${u.id}', 'approved')">승인</button>
+                <button class="btn btn-ghost btn-sm" onclick="updateStatus('${u.id}', 'rejected')">거절</button>
+              `;
+        } else if (u.status === 'approved') {
+          statusBadge = `<span class="badge-approved">승인됨</span>`;
+          actionBtns = `
+                <button class="btn btn-ghost btn-sm" onclick="updateStatus('${u.id}', 'rejected')">거절로 변경</button>
+              `;
+        } else if (u.status === 'rejected') {
+          statusBadge = `<span class="badge-rejected">거절됨</span>`;
+          actionBtns = `
+                <button class="btn btn-primary btn-sm" onclick="updateStatus('${u.id}', 'approved')">승인으로 변경</button>
+              `;
+        } else {
+          statusBadge = `<span class="badge-approved">승인됨(구회원)</span>`;
+          actionBtns = `
+                <button class="btn btn-ghost btn-sm" onclick="updateStatus('${u.id}', 'rejected')">거절로 변경</button>
+              `;
+        }
+
+        return `
+            <div class="user-item">
+              <div class="user-info">
+                <div class="user-name">${u.name} (${u.userid}) ${statusBadge}</div>
+                <div class="user-meta">연락처: ${u.phone} | 주소: ${u.address || '없음'} | 지번: ${u.land || '없음'}</div>
+              </div>
+              <div class="user-actions">
+                ${actionBtns}
+              </div>
+            </div>
+          `;
+      }).join('');
+    }
+
+    window.updateStatus = async function (id, newStatus) {
+      window.showCustomConfirm(
+        newStatus === 'approved' ? '해당 회원을 승인하시겠습니까?' : '해당 회원의 가입을 거절하시겠습니까?',
+        async () => {
+          try {
+            const { error } = await supabaseClient.from('users').update({ status: newStatus }).eq('id', id);
+            if (error) throw error;
+
+            window.showCustomAlert('처리가 완료되었습니다.');
+            loadUsers();
+          } catch (e) {
+            console.error(e);
+            window.showCustomAlert('처리 중 오류가 발생했습니다.');
+          }
+        }
+      );
+    };
+  </script>
+</body>
+
+</html>
