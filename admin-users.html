@@ -4,78 +4,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>회원 관리 · 한남1구역 신속통합기획</title>
+  <title>문의하기 · 한남1구역 신속통합기획</title>
   <meta name="theme-color" content="#0d1826">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    .user-item {
-      padding: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .user-name {
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
-    }
-
-    .user-meta {
-      font-size: 13px;
-      color: #aaa;
-    }
-
-    .user-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .badge-approved {
-      background-color: rgba(76, 175, 80, 0.2);
-      color: #4CAF50;
-      border: 1px solid rgba(76, 175, 80, 0.5);
-      border-radius: 4px;
-      padding: 2px 6px;
-      font-size: 12px;
-      margin-left: 6px;
-    }
-
-    .badge-rejected {
-      background-color: rgba(244, 67, 54, 0.2);
-      color: #F44336;
-      border: 1px solid rgba(244, 67, 54, 0.5);
-      border-radius: 4px;
-      padding: 2px 6px;
-      font-size: 12px;
-      margin-left: 6px;
-    }
-
-    .badge-wait2 {
-      background-color: rgba(201, 164, 104, 0.2);
-      color: #c9a468;
-      border: 1px solid rgba(201, 164, 104, 0.5);
-      border-radius: 4px;
-      padding: 2px 6px;
-      font-size: 12px;
-      margin-left: 6px;
+    .board-item { grid-template-columns: 70px 1fr auto !important; }
+    @media (max-width: 700px) {
+      .board-item { grid-template-columns: 1fr !important; grid-template-areas: "title" "meta" !important; }
+      .board-item .b-date { margin-top: 10px; }
     }
   </style>
 </head>
 
 <body>
+
 
   <div class="util-bar">
     <div class="wrap util-bar-inner">
@@ -84,14 +26,19 @@
         <span class="util-notice-text" id="utilNoticeText">공지사항을 불러오는 중...</span>
       </div>
       <div class="util-auth">
-        <!-- Auth updated via JS -->
+        <a href="notice-board.html">공지사항</a>
+        <span class="util-sep">|</span>
+        <a href="auth.html">로그인</a>
+        <span class="util-sep">|</span>
+        <a href="auth.html?tab=signup">회원가입</a>
       </div>
     </div>
   </div>
 
+
   <header>
     <div class="nav">
-      <a href="index.html" class="brand"><span class="mark">南</span>한남1구역 신속통합기획 추진위원회</a>
+      <a href="index.html" class="brand"><span class="mark">南</span>한남1구역 재개발 추진준비위원회</a>
       <nav class="navlinks">
         <a href="index.html#story">왜 지금인가</a>
         <a href="index.html#why">신속통합기획</a>
@@ -103,11 +50,12 @@
     </div>
   </header>
 
+
   <section class="page-hero">
     <div class="wrap">
       <div class="eyebrow">관리자 전용</div>
-      <h2>회원 관리 (가입 승인)</h2>
-      <p class="lede">가입을 신청한 회원 목록을 확인하고 승인 또는 거절 처리할 수 있습니다.</p>
+      <h2>회원 관리(가입 승인)</h2>
+      <p class="lede">가입을 요청한 회원 목록을 확인하고 승인 또는 거절 처리하실 수 있습니다.</p>
     </div>
   </section>
 
@@ -122,20 +70,22 @@
     </div>
   </section>
 
+
   <footer>
     <div class="wrap">
       <div class="foot-top">
-        <div class="foot-brand">한남1구역 신속통합기획 추진위원회</div>
+        <div class="foot-brand">한남1구역 재개발 추진준비위원회</div>
         <div class="foot-links">
           <a href="index.html">홈</a>
           <a href="index.html#why">신속통합기획</a>
-          <a href="/notice">공지사항</a>
+          <a href="notice-board.html">공지사항</a>
           <a href="inquiry-board.html">문의하기</a>
           <a href="auth.html">로그인/회원가입</a>
         </div>
       </div>
     </div>
   </footer>
+
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
@@ -161,7 +111,8 @@
       try {
         const { data, error } = await supabaseClient
           .from('users')
-          .select('*');
+          .select('*')
+          .order('created_at', { ascending: false });
 
         if (error) throw error;
 
@@ -169,7 +120,7 @@
         renderUsers(filteredUsers);
       } catch (e) {
         console.error(e);
-        document.getElementById('userList').innerHTML = '<div class="board-empty">회원 목록을 불러올 수 없습니다.</div>';
+        document.getElementById('userList').innerHTML = '<div class="board-empty">회원 목록을 불러오지 못했습니다.</div>';
       }
     }
 
@@ -184,40 +135,44 @@
         return;
       }
 
-      box.innerHTML = users.map(u => {
+      box.innerHTML = users.map((u, i) => {
         let statusBadge = '';
         let actionBtns = '';
 
         if (u.status === 'pending') {
-          statusBadge = `<span class="badge-wait2">대기중</span>`;
+          statusBadge = `<span class="badge badge-wait">대기중</span>`;
           actionBtns = `
                 <button class="btn btn-primary btn-sm" onclick="updateStatus('${u.id}', 'approved')">승인</button>
                 <button class="btn btn-ghost btn-sm" onclick="updateStatus('${u.id}', 'rejected')">거절</button>
               `;
         } else if (u.status === 'approved') {
-          statusBadge = `<span class="badge-approved">승인됨</span>`;
+          statusBadge = `<span class="badge badge-pin">승인됨</span>`;
           actionBtns = `
                 <button class="btn btn-ghost btn-sm" onclick="updateStatus('${u.id}', 'rejected')">거절로 변경</button>
               `;
         } else if (u.status === 'rejected') {
-          statusBadge = `<span class="badge-rejected">거절됨</span>`;
+          statusBadge = `<span class="badge" style="background:rgba(244,67,54,0.15);color:#F44336;">거절됨</span>`;
           actionBtns = `
                 <button class="btn btn-primary btn-sm" onclick="updateStatus('${u.id}', 'approved')">승인으로 변경</button>
               `;
         } else {
-          statusBadge = `<span class="badge-approved">승인됨(구회원)</span>`;
+          statusBadge = `<span class="badge badge-pin">승인됨(구회원)</span>`;
           actionBtns = `
                 <button class="btn btn-ghost btn-sm" onclick="updateStatus('${u.id}', 'rejected')">거절로 변경</button>
               `;
         }
 
         return `
-            <div class="user-item">
-              <div class="user-info">
-                <div class="user-name">${u.name} (${u.userid}) ${statusBadge}</div>
-                <div class="user-meta">연락처: ${u.phone} | 주소: ${u.address || '없음'} | 지번: ${u.land || '없음'}</div>
+            <div class="board-item" style="cursor:default;">
+              <div class="b-no">${users.length - i}</div>
+              <div class="b-title" style="flex-direction:column; align-items:flex-start; gap:4px; margin-right:16px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="tt">${u.name} (${u.userid})</span> 
+                  ${statusBadge}
+                </div>
+                <div style="font-size:13.5px; color:var(--mist-dim); font-weight:normal;">연락처: ${u.phone} | 주소: ${u.address || '없음'} | 지번: ${u.land || '없음'}</div>
               </div>
-              <div class="user-actions">
+              <div class="b-date" style="display:flex; gap:8px;">
                 ${actionBtns}
               </div>
             </div>

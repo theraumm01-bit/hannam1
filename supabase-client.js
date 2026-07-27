@@ -118,6 +118,19 @@ window.showCustomAlert = function(message) {
     modal.style.transform = 'translateY(20px)';
     modal.style.transition = 'transform 0.2s ease';
 
+    
+    const eyebrowEl = document.createElement('div');
+    eyebrowEl.innerHTML = '<div style="width:22px;height:1px;background:#c9a468;"></div>알림';
+    eyebrowEl.style.fontSize = '13.5px';
+    eyebrowEl.style.letterSpacing = '.14em';
+    eyebrowEl.style.color = '#a9793a';
+    eyebrowEl.style.fontWeight = '600';
+    eyebrowEl.style.marginBottom = '14px';
+    eyebrowEl.style.display = 'flex';
+    eyebrowEl.style.alignItems = 'center';
+    eyebrowEl.style.justifyContent = 'center';
+    eyebrowEl.style.gap = '10px';
+
     const msgEl = document.createElement('p');
     msgEl.innerHTML = message;
     msgEl.style.color = '#f6f2ea';
@@ -159,6 +172,7 @@ window.showCustomAlert = function(message) {
     btnConfirm.onclick = closeModal;
 
     btnContainer.appendChild(btnConfirm);
+    modal.appendChild(eyebrowEl);
     modal.appendChild(msgEl);
     modal.appendChild(btnContainer);
     backdrop.appendChild(modal);
@@ -198,6 +212,19 @@ window.showCustomPrompt = function(message, onConfirm, options = {}) {
     modal.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
     modal.style.transform = 'translateY(20px)';
     modal.style.transition = 'transform 0.2s ease';
+
+    
+    const eyebrowEl = document.createElement('div');
+    eyebrowEl.innerHTML = '<div style="width:22px;height:1px;background:#c9a468;"></div>알림';
+    eyebrowEl.style.fontSize = '13.5px';
+    eyebrowEl.style.letterSpacing = '.14em';
+    eyebrowEl.style.color = '#a9793a';
+    eyebrowEl.style.fontWeight = '600';
+    eyebrowEl.style.marginBottom = '14px';
+    eyebrowEl.style.display = 'flex';
+    eyebrowEl.style.alignItems = 'center';
+    eyebrowEl.style.justifyContent = 'center';
+    eyebrowEl.style.gap = '10px';
 
     const msgEl = document.createElement('p');
     msgEl.innerHTML = message;
@@ -292,6 +319,7 @@ window.showCustomPrompt = function(message, onConfirm, options = {}) {
 
     btnContainer.appendChild(btnCancel);
     btnContainer.appendChild(btnConfirm);
+    modal.appendChild(eyebrowEl);
     modal.appendChild(msgEl);
     modal.appendChild(inputEl);
     modal.appendChild(btnContainer);
@@ -333,6 +361,19 @@ window.showCustomConfirm = function(message, onConfirm) {
     modal.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
     modal.style.transform = 'translateY(20px)';
     modal.style.transition = 'transform 0.2s ease';
+
+    
+    const eyebrowEl = document.createElement('div');
+    eyebrowEl.innerHTML = '<div style="width:22px;height:1px;background:#c9a468;"></div>알림';
+    eyebrowEl.style.fontSize = '13.5px';
+    eyebrowEl.style.letterSpacing = '.14em';
+    eyebrowEl.style.color = '#a9793a';
+    eyebrowEl.style.fontWeight = '600';
+    eyebrowEl.style.marginBottom = '14px';
+    eyebrowEl.style.display = 'flex';
+    eyebrowEl.style.alignItems = 'center';
+    eyebrowEl.style.justifyContent = 'center';
+    eyebrowEl.style.gap = '10px';
 
     const msgEl = document.createElement('p');
     msgEl.innerHTML = message;
@@ -401,6 +442,7 @@ window.showCustomConfirm = function(message, onConfirm) {
 
     btnContainer.appendChild(btnConfirm);
     btnContainer.appendChild(btnCancel);
+    modal.appendChild(eyebrowEl);
     modal.appendChild(msgEl);
     modal.appendChild(btnContainer);
     backdrop.appendChild(modal);
