@@ -155,11 +155,20 @@
           actionBtns = `
                 <button class="btn btn-primary btn-sm" onclick="updateStatus('${u.id}', 'approved')">승인으로 변경</button>
               `;
+        } else if (u.status === 'withdrawn') {
+          statusBadge = `<span class="badge" style="background:#555;color:#fff;">탈퇴됨</span>`;
+          actionBtns = ``;
         } else {
           statusBadge = `<span class="badge badge-pin">승인됨(구회원)</span>`;
           actionBtns = `
                 <button class="btn btn-ghost btn-sm" onclick="updateStatus('${u.id}', 'rejected')">거절로 변경</button>
               `;
+        }
+
+        if (u.status !== 'withdrawn') {
+          actionBtns += `
+                <button class="btn btn-ghost btn-sm" style="color:#F44336; border-color:#F44336;" onclick="withdrawUser('${u.id}', '${u.userid}')">탈퇴</button>
+          `;
         }
 
         return `
@@ -189,6 +198,29 @@
             if (error) throw error;
 
             window.showCustomAlert('처리가 완료되었습니다.');
+            loadUsers();
+          } catch (e) {
+            console.error(e);
+            window.showCustomAlert('상태 업데이트 중 오류가 발생했습니다.');
+          }
+        }
+      );
+    };
+
+    window.withdrawUser = async function (id, userid) {
+      window.showCustomConfirm(
+        `정말 <b>${userid}</b> 회원을 탈퇴 처리하시겠습니까?<br><span style="font-size:13px; color:#F44336;">해당 아이디는 즉시 재가입이 가능하도록 변경됩니다.</span>`,
+        async () => {
+          try {
+            const newUserId = userid + '_del_' + Date.now();
+            const { error } = await supabaseClient.from('users').update({ 
+              status: 'withdrawn', 
+              userid: newUserId 
+            }).eq('id', id);
+            
+            if (error) throw error;
+
+            window.showCustomAlert('회원 탈퇴 처리가 완료되었습니다.');
             loadUsers();
           } catch (e) {
             console.error(e);
